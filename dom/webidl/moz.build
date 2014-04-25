@@ -249,6 +249,7 @@ WEBIDL_FILES = [
     'KeyboardEvent.webidl',
     'KeyEvent.webidl',
     'Label.webidl',
+    'LabeledBlob.webidl',
     'LegacyQueryInterface.webidl',
     'LinkStyle.webidl',
     'LocalMediaStream.webidl',

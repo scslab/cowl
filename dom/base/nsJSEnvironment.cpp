@@ -58,6 +58,7 @@
 #include "mozilla/dom/ErrorEvent.h"
 #include "mozilla/dom/ImageDataBinding.h"
 #include "mozilla/dom/ImageData.h"
+#include "mozilla/dom/LabeledBlob.h"
 #include "mozilla/dom/StructuredClone.h"
 #include "mozilla/dom/SubtleCryptoBinding.h"
 #include "mozilla/ipc/BackgroundUtils.h"
@@ -2557,6 +2558,8 @@ NS_DOMReadStructuredClone(JSContext* cx,
 {
   if (tag == SCTAG_DOM_IMAGEDATA) {
     return ReadStructuredCloneImageData(cx, reader);
+  } else if (tag == SCTAG_DOM_LABELEDBLOB) {
+    return LabeledBlob::ReadStructuredClone(cx, reader, data);
   } else if (tag == SCTAG_DOM_WEBCRYPTO_KEY) {
     nsIGlobalObject *global = xpc::NativeGlobal(JS::CurrentGlobalOrNull(cx));
     if (!global) {
@@ -2631,6 +2634,12 @@ NS_DOMWriteStructuredClone(JSContext* cx,
   ImageData* imageData;
   if (NS_SUCCEEDED(UNWRAP_OBJECT(ImageData, obj, imageData))) {
     return WriteStructuredCloneImageData(cx, writer, imageData);
+  }
+
+  // Handle LabeledBlob cloning
+  LabeledBlob* labeledBlob;
+  if (NS_SUCCEEDED(UNWRAP_OBJECT(LabeledBlob, obj, labeledBlob))) {
+    return labeledBlob->WriteStructuredClone(cx, writer);
   }
 
   // Handle Key cloning

@@ -1,0 +1,21 @@
+/* -*- Mode: C++; tab-width: 50; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+#include "nsISupports.idl"
+
+interface LabeledBlob;
+
+[scriptable, uuid(5a546b3a-0fa7-4fe5-ac39-6ca90c99e40d)]
+interface nsILabeledBlobService : nsISupports
+{
+};
+
+%{ C++
+#define LABELEDBLOBSERVICE_CONTRACTID "@mozilla.org/labeledblob-service;1"
+#define LABELEDBLOBSERVICE_CID \
+  { 0xac9737e0, 0xd873, 0x40aa, \
+    { 0xb8, 0x6a, 0x6b, 0xce, 0x6d, 0xd4, 0x3d, 0xa2 }}
+
+%}

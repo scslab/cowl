@@ -213,6 +213,7 @@ static void Shutdown();
 #endif
 #include "nsCSPService.h"
 #include "nsCSPContext.h"
+#include "nsLabeledBlobService.h"
 #include "nsICellBroadcastService.h"
 #include "nsISmsService.h"
 #include "nsIMmsService.h"
@@ -599,6 +600,7 @@ NS_GENERIC_FACTORY_CONSTRUCTOR(FakeSpeechRecognitionService)
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(nsCSPContext)
 NS_GENERIC_FACTORY_CONSTRUCTOR(CSPService)
+NS_GENERIC_FACTORY_CONSTRUCTOR(nsLabeledBlobService)
 NS_GENERIC_FACTORY_CONSTRUCTOR(nsMixedContentBlocker)
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(nsPrincipal)
@@ -743,6 +745,7 @@ NS_DEFINE_NAMED_CID(NS_DATASTORE_SERVICE_CID);
 NS_DEFINE_NAMED_CID(NS_FOCUSMANAGER_CID);
 NS_DEFINE_NAMED_CID(CSPSERVICE_CID);
 NS_DEFINE_NAMED_CID(NS_CSPCONTEXT_CID);
+NS_DEFINE_NAMED_CID(LABELEDBLOBSERVICE_CID);
 NS_DEFINE_NAMED_CID(NS_MIXEDCONTENTBLOCKER_CID);
 NS_DEFINE_NAMED_CID(NS_EVENTLISTENERSERVICE_CID);
 NS_DEFINE_NAMED_CID(NS_GLOBALMESSAGEMANAGER_CID);
@@ -1036,6 +1039,7 @@ static const mozilla::Module::CIDEntry kLayoutCIDs[] = {
 #endif
   { &kCSPSERVICE_CID, false, nullptr, CSPServiceConstructor },
   { &kNS_CSPCONTEXT_CID, false, nullptr, nsCSPContextConstructor },
+  { &kLABELEDBLOBSERVICE_CID , false, nullptr, nsLabeledBlobServiceConstructor },
   { &kNS_MIXEDCONTENTBLOCKER_CID, false, nullptr, nsMixedContentBlockerConstructor },
   { &kNS_EVENTLISTENERSERVICE_CID, false, nullptr, CreateEventListenerService },
   { &kNS_GLOBALMESSAGEMANAGER_CID, false, nullptr, CreateGlobalMessageManager },
@@ -1192,6 +1196,7 @@ static const mozilla::Module::ContractIDEntry kLayoutContracts[] = {
 #endif
   { CSPSERVICE_CONTRACTID, &kCSPSERVICE_CID },
   { NS_CSPCONTEXT_CONTRACTID, &kNS_CSPCONTEXT_CID },
+  { LABELEDBLOBSERVICE_CONTRACTID, &kLABELEDBLOBSERVICE_CID },
   { NS_MIXEDCONTENTBLOCKER_CONTRACTID, &kNS_MIXEDCONTENTBLOCKER_CID },
   { NS_EVENTLISTENERSERVICE_CONTRACTID, &kNS_EVENTLISTENERSERVICE_CID },
   { NS_GLOBALMESSAGEMANAGER_CONTRACTID, &kNS_GLOBALMESSAGEMANAGER_CID },
