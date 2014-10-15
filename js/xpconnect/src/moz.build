@@ -49,6 +49,7 @@ UNIFIED_SOURCES += [
 # XPCComponents.cpp cannot be built in unified mode because it uses plarena.h.
 SOURCES += [
     'XPCComponents.cpp',
+    'XPCCOWL.cpp',
 ]
 
 GENERATED_SOURCES += [

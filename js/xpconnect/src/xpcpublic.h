@@ -569,4 +569,53 @@ bool IsChromeOrXBL(JSContext* cx, JSObject* /* unused */);
 } // namespace dom
 } // namespace mozilla
 
+namespace mozilla {
+namespace dom {
+class Label;
+class COWL;
+} // namespace dom
+} // namespace mozilla
+
+// COWL compartment related
+namespace xpc {
+namespace cowl {
+
+NS_EXPORT_(void)
+EnableCompartmentConfinement(JSCompartment *compartment);
+
+NS_EXPORT_(bool)
+IsCompartmentConfined(JSCompartment *compartment);
+
+#define DECLARE_SET_LABEL(name)                       \
+    NS_EXPORT_(void)                                  \
+    SetCompartment##name(JSCompartment *compartment,  \
+                         mozilla::dom::Label *aLabel);
+
+#define DECLARE_GET_LABEL(name)                       \
+    NS_EXPORT_(already_AddRefed<mozilla::dom::Label>) \
+    GetCompartment##name(JSCompartment *compartment);
+
+// Compartment label
+DECLARE_SET_LABEL(PrivacyLabel);
+DECLARE_GET_LABEL(PrivacyLabel);
+
+DECLARE_SET_LABEL(TrustLabel);
+DECLARE_GET_LABEL(TrustLabel);
+
+// Compartment clearance
+DECLARE_SET_LABEL(PrivacyClearance);
+DECLARE_GET_LABEL(PrivacyClearance);
+
+DECLARE_SET_LABEL(TrustClearance);
+DECLARE_GET_LABEL(TrustClearance);
+
+DECLARE_SET_LABEL(Privileges);
+DECLARE_GET_LABEL(Privileges);
+
+#undef DECLARE_SET_LABEL
+#undef DECLARE_GET_LABEL
+
+} // namespace cowl
+} // namespace xpc
+
 #endif
