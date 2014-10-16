@@ -147,6 +147,7 @@ COWL::SetPrivacyLabel(const GlobalObject& global, JSContext* cx,
   xpc::cowl::SetCompartmentPrivacyLabel(compartment, &aLabel);
   // This affects cross-compartment communication. Adjust wrappers:
   js::RecomputeWrappers(cx, js::AllCompartments(), js::AllCompartments());
+  xpc::cowl::RefineCompartmentCSP(compartment);
 }
 
 already_AddRefed<Label>

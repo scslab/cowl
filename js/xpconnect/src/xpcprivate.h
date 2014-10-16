@@ -3626,6 +3626,9 @@ public:
                  , mPrivacyClearance(nullptr)
                  , mTrustClearance(nullptr)
                  , mPrivileges(nullptr)
+                 , mSetSandboxFlags(false)
+                 , mSandboxFlags(0)
+                 , mCSPIndex(0)
     {}
 
     ~COWLConfig() {
@@ -3634,6 +3637,9 @@ public:
         mPrivacyClearance = nullptr;
         mTrustClearance   = nullptr;
         mPrivileges       = nullptr;
+        mSetSandboxFlags  = false;
+        mSandboxFlags     = 0;
+        mCSPIndex         = 0;
     }
 
     // Is the compartment confinement enabled.
@@ -3689,6 +3695,22 @@ public:
         return !l ? nullptr: l.forget();
     }
 
+    inline bool SetSandboxFlags() {
+        return mSetSandboxFlags;
+    }
+
+    inline void SetSandboxFlags(uint32_t flags) {
+        mSetSandboxFlags = true;
+        mSandboxFlags    = flags;
+    }
+    inline void ClearSandboxFlags() {
+        mSetSandboxFlags = false;
+        mSandboxFlags    = 0;
+    }
+    inline uint32_t GetSandboxFlags() {
+        return mSandboxFlags;
+    }
+
 
 private:
 
@@ -3702,6 +3724,14 @@ private:
 
     // Compartment privileges
     nsRefPtr<mozilla::dom::Label> mPrivileges;
+
+    // Sandbox flags
+    bool     mSetSandboxFlags;
+    uint32_t mSandboxFlags;
+
+public:
+    // CSP policy index
+    uint32_t mCSPIndex;
 };
 
 } //namespace cowl
