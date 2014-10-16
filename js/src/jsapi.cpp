@@ -1384,6 +1384,12 @@ JS_GetGlobalForCompartmentOrNull(JSContext *cx, JSCompartment *c)
 }
 
 JS_PUBLIC_API(JSObject *)
+JS_GetGlobalForCompartmentOrNull(JSCompartment *c)
+{
+    return c->maybeGlobal();
+}
+
+JS_PUBLIC_API(JSObject *)
 JS::CurrentGlobalOrNull(JSContext *cx)
 {
     AssertHeapIsIdleOrIterating(cx);

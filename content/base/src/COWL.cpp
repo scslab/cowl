@@ -55,6 +55,8 @@ COWL::Enable(const GlobalObject& global, JSContext *cx)
     js::GetObjectCompartment(global.Get());
   MOZ_ASSERT(compartment);
   xpc::cowl::EnableCompartmentConfinement(compartment);
+  // Start using COWL wrappers:
+  js::RecomputeWrappers(cx, js::AllCompartments(), js::AllCompartments());
 }
 
 bool 
@@ -143,6 +145,8 @@ COWL::SetPrivacyLabel(const GlobalObject& global, JSContext* cx,
   }
 
   xpc::cowl::SetCompartmentPrivacyLabel(compartment, &aLabel);
+  // This affects cross-compartment communication. Adjust wrappers:
+  js::RecomputeWrappers(cx, js::AllCompartments(), js::AllCompartments());
 }
 
 already_AddRefed<Label>
@@ -189,6 +193,9 @@ COWL::SetTrustLabel(const GlobalObject& global, JSContext* cx,
   }
 
   xpc::cowl::SetCompartmentTrustLabel(compartment, &aLabel);
+  // Changing the trust/integrity label affects cross-compartment
+  // communication. Adjust wrappers:
+  js::RecomputeWrappers(cx, js::AllCompartments(), js::AllCompartments());
 }
 
 already_AddRefed<Label>

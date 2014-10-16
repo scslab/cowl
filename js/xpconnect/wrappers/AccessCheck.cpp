@@ -147,6 +147,19 @@ IsWindow(const char *name)
     return name[0] == 'W' && !strcmp(name, "Window");
 }
 
+static bool
+IsPostMessage(const char *name, JSFlatString *prop)
+{
+    return JS_FlatStringEqualsAscii(prop, "postMessage");
+}
+
+static bool
+IsAddonSDK(JSCompartment *compartment)
+{
+    return
+        static_cast<CompartmentPrivate*>(JS_GetCompartmentPrivate(compartment))->scope->IsAddonScope();
+}
+
 bool
 AccessCheck::isCrossOriginAccessPermitted(JSContext *cx, HandleObject wrapper, HandleId id,
                                           Wrapper::Action act)
@@ -358,6 +371,81 @@ ExposedPropertiesOnly::deny(js::Wrapper::Action act, HandleId id)
                                    "Access to privileged JS object not permitted");
     }
 
+    return false;
+}
+
+bool
+ConfinementPolicy::check(JSContext *cx, JSObject *wrapperArg, jsid idArg, Wrapper::Action act)
+{
+    RootedObject wrapper(cx, wrapperArg);
+    RootedId id(cx, idArg);
+    RootedObject wrapped(cx, Wrapper::wrappedObject(wrapper));
+
+    // Check if access is for postMessage
+    bool isPostMessage = false;
+    {
+        const char *name;
+        const js::Class *clasp = js::GetObjectClass(wrapped);
+        MOZ_ASSERT(!XrayUtils::IsXPCWNHolderClass(Jsvalify(clasp)), "shouldn't have a holder here");
+        if (clasp->ext.innerObject)
+            name = "Window";
+        else
+            name = clasp->name;
+
+        if (JSID_IS_STRING(id))
+            isPostMessage = IsPostMessage(name, JSID_TO_FLAT_STRING(id));
+#if COWL_DEBUG
+        printf("ConfinementPolicy::check name=%s\n", name);
+        if (JSID_IS_STRING(id)) {
+            char *id_str = JS_EncodeString(cx, JSID_TO_STRING(id));
+            printf("ConfinementPolicy::check id=%s\n", id_str);
+        }
+#endif
+    }
+
+    // Information flows from the wrapped to the wrapper
+    // The two are swapped for postMessage
+    JSCompartment *fromCompartment = js::GetObjectCompartment(wrapper),
+                  *toCompartment   = js::GetObjectCompartment(wrapped);
+
+#if COWL_DEBUG
+    {
+        printf("ConfinementPolicy::check %s\n",
+                act == Wrapper::SET ? "SET" :
+                act == Wrapper::CALL ? "CALL" : "GET");
+        {
+            char *origin;
+            GetCompartmentPrincipal(fromCompartment)->GetOrigin(&origin);
+            printf("ConfinementPolicy::check %s ", origin);
+            nsMemory::Free(origin);
+        }
+        {
+            char *origin;
+            GetCompartmentPrincipal(toCompartment)->GetOrigin(&origin);
+            printf(" to %s\n", origin);
+            nsMemory::Free(origin);
+        }
+    }
+#endif
+
+    // AddonSDK compartments are trusted
+    if (IsAddonSDK(toCompartment) || IsAddonSDK(fromCompartment)) {
+        return true;
+    }
+
+    // Is this allowed by same origin policy? If not, do not allow it
+    if (!AccessCheck::isCrossOriginAccessPermitted(cx, wrapper, id, act)) {
+        NS_WARNING("Cross origin SOP check failed");
+        return false;
+    }
+
+    if (isPostMessage) {
+        bool ok = cowl::GuardRead(toCompartment, fromCompartment, act == Wrapper::GET);
+        if (!ok)
+            NS_WARNING("postMessage read guard failed");
+        return ok;
+    }
+    NS_WARNING("Only postMessage allowed failed");
     return false;
 }
 

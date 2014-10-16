@@ -615,6 +615,27 @@ DECLARE_GET_LABEL(Privileges);
 #undef DECLARE_SET_LABEL
 #undef DECLARE_GET_LABEL
 
+// Can information flow form source to compartment
+NS_EXPORT_(bool)
+GuardRead(JSCompartment *compartment, JSCompartment *source, bool isRead = true);
+
+// Can information flow to compartment from object labeld with privacy and trust
+NS_EXPORT_(bool)
+GuardRead(JSCompartment *compatment,
+          mozilla::dom::Label &privacy, mozilla::dom::Label &trust,
+          mozilla::dom::Label *aPrivs = nullptr,
+          JSContext *cx = nullptr);
+
+// Can information flow from compartment to object labeld with privacy and trust
+NS_EXPORT_(bool)
+GuardWrite(JSCompartment *compartment,
+          mozilla::dom::Label &privacy, mozilla::dom::Label &trust,
+          mozilla::dom::Label *aPrivs = nullptr);
+
+// Can information flow from compartment to dst
+NS_EXPORT_(bool)
+GuardWrite(JSCompartment *compartment, JSCompartment *dst);
+
 } // namespace cowl
 } // namespace xpc
 

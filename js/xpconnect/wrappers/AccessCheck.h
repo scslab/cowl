@@ -84,6 +84,20 @@ struct ExposedPropertiesOnly : public Policy {
     }
 };
 
+struct ConfinementPolicy : public Policy {
+    static bool check(JSContext *cx, JSObject *wrapperArg, jsid idArg, js::Wrapper::Action act);
+    static bool deny(js::Wrapper::Action act, JS::HandleId id) {
+        // Silent failures
+        return true;
+    }
+    static bool allowNativeCall(JSContext *cx, JS::IsAcceptableThis test, JS::NativeImpl impl)
+    {
+        return false;
+    }
+    static bool subsumes(JSCompartment *a, JSCompartment *b);
+};
+
+
 }
 
 #endif /* __AccessCheck_h__ */

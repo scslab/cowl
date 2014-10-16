@@ -1801,6 +1801,9 @@ JS_IsGlobalObject(JSObject *obj);
 extern JS_PUBLIC_API(JSObject *)
 JS_GetGlobalForCompartmentOrNull(JSContext *cx, JSCompartment *c);
 
+extern JS_PUBLIC_API(JSObject *)
+JS_GetGlobalForCompartmentOrNull(JSCompartment *c);
+
 namespace JS {
 
 extern JS_PUBLIC_API(JSObject *)
