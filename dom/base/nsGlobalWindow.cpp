@@ -7935,7 +7935,7 @@ PostMessageWriteStructuredClone(JSContext* cx,
   // See if this is a File/Blob object.
   {
     File* blob = nullptr;
-    if (scInfo->subsumes && NS_SUCCEEDED(UNWRAP_OBJECT(Blob, obj, blob))) {
+    if (/*scInfo->subsumes &&*/ NS_SUCCEEDED(UNWRAP_OBJECT(Blob, obj, blob))) {
       FileImpl* blobImpl = blob->Impl();
       if (JS_WriteUint32Pair(writer, SCTAG_DOM_BLOB, 0) &&
           JS_WriteBytes(writer, &blobImpl, sizeof(blobImpl))) {
@@ -7953,7 +7953,7 @@ PostMessageWriteStructuredClone(JSContext* cx,
     nsISupports* supports = wrappedNative->Native();
 
     nsCOMPtr<nsIDOMFileList> list = do_QueryInterface(supports);
-    if (list && scInfo->subsumes)
+    if (list /*&& scInfo->subsumes*/)
       scTag = SCTAG_DOM_FILELIST;
 
     if (scTag)
